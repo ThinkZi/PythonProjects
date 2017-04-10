@@ -1,0 +1,9 @@
+from file name:file1.txt
+Content 1
+
+from file name:file2.txt
+Content 2
+
+from file name:file3.txt
+Content 3
+
