@@ -1,0 +1,36 @@
+html, body {
+  height: 100% auto;
+  margin: 0;
+  background-color: #8EBCD2;
+}
+
+.container {
+  margin: 0 auto;
+  background-color: #8EBCD2;
+  text-align: center;
+  align-items: center;
+}
+
+.container h1 {
+  color: #212A48;
+}
+
+.container h3 {
+  color: #42538C;
+}
+
+.boxed {
+  margin-left: 520px;
+  margin-right: 520px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #00218D ;
+  align-content: center;
+}
+
+.message {
+  margin: 0 auto;
+  background-color: #8EBCD2;
+  text-align: center;
+  align-items: center;
+}
