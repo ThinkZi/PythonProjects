@@ -8,10 +8,9 @@ from decimal import Decimal
 import fileinput
 import sys
 
-pathholderpath="C:/Users/hzoghi/Documents/PythonProjects/Springback_automation/Paths.csv"
-doePath="C:/Users/hzoghi/Documents/PythonProjects/Springback_automation/DOE.csv"
 #read paths
 def find_path(whichpath):
+    pathholderpath="C:/Users/hzoghi/Documents/PythonProjects/Springback_automation/Paths.csv"
     #the followings can be passed to this function
     #blank, 1_stage1_forming, 2_stage2_springback, results, ArchivedDynaOutputs
     df=pd.read_csv(pathholderpath)
@@ -49,14 +48,17 @@ def submit():
     os.system(r"C:\Hamed\backup\test\Springback_Experiment\filleted\test.bat")
     return
 
+def how_many_rows_in_doe():
+    doePath="C:/Users/hzoghi/Documents/PythonProjects/Springback_automation/DOE.csv"
+    df=pd.read_csv(doePath)
+    number_of_rows=len(df.index)
+    return number_of_rows
 #reads the DOE data and returns the specific parameter value along with the
 #simulation ID in the form of a dictionary {'simID': ID, 'p':value}
-def get_parameter(index,p):
-    ID_label='simID'
+def get_parameter(index):
+    doePath="C:/Users/hzoghi/Documents/PythonProjects/Springback_automation/DOE.csv"
     df=pd.read_csv(doePath)
-    value=df.get_value(index,p)
-    ID=df.get_value(index, ID_label)
-    values={ID_label:ID, p:value}
+    values=df.to_dict('index')[index]
     return values
 
 #check for the solver #ls-dyna_smp process instance
@@ -89,7 +91,7 @@ def get_mat_card(path):
 #change the parameter p's value to v in the material card of the DYNA input
 def update_material_parameter_line(file_path,p,v):
     #contains the last character location of the parameter in DYNA format
-    p_character_loc={"RO":20,"E":30,"PR":40, "SIGY":50, "ETAN":60,"r":70, "hlcid":80 }
+    p_character_loc={"ro":20,"e":30,"pr":40, "sigy":50, "etan":60,"r":70 }
     with open(file_path) as f:
         DYNA_P_length=10
         card=get_mat_card(file_path)
@@ -105,7 +107,8 @@ def write_new_material_line(path,oldLine,newLine):
             line = newLine
         sys.stdout.write(line)
     return
-
+#reads the nodout file and passes a dataframe containing the displacements
+#and node ids
 def read_nodout_to_df(path):
     phrase1= "n o d a l   p r i n t   o u t"
     phrase2= "at time 1.0000000E+00"
@@ -145,8 +148,8 @@ def read_nodout_to_df(path):
                 row=[point,xdisp,ydisp,zdisp]
                 l.append(row)
                 row=[]
-    df=pd.DataFrame(l,columns=header[0:4])
-    df.set_index=df['point']
+    df=pd.DataFrame(l,columns=header[:4])
+    df=df[1:] #removing the first row which is empty
     return df
 
 #folderID="blank"
@@ -157,5 +160,5 @@ def read_nodout_to_df(path):
 #newLine=update_material_parameter_line(path,"E",210000)
 #write_new_material_line(path,card[2],newLine)
 
-path=r"C:\Hamed\backup\test\Springback_Experiment\filleted\2_stage2_springback\2_stage2_springback.nodout"
-print(read_nodout_to_df(path))
+#path=r"C:\Hamed\backup\test\Springback_Experiment\filleted\2_stage2_springback\2_stage2_springback.nodout"
+#print(read_nodout_to_df(path))
