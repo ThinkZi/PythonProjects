@@ -8,19 +8,24 @@ import re
 from decimal import Decimal
 import fileinput
 import sys
+import subprocess
+
 from functions import *
+import time
 #Workflow
-#1. read the path holder files
 
-
-#2. create the destination folder
+#2. create the destination folders
 results_folder=find_path('results')
 archive_folder=find_path('ArchivedDynaOutputs')
 ensure_dir(results_folder)
 ensure_dir(archive_folder)
+
+#get the material file
 material_file=find_path('blank')+"/"+"blank_material.k"
 
 for i in range(how_many_rows_in_doe()):
+    #iterating the rows of the DOE table
+    #Get the parameter set at each row of the DOE table
     test_vals=get_parameter(i)
     for key in test_vals:
         simID=str(int(test_vals["simID"]))
@@ -28,13 +33,22 @@ for i in range(how_many_rows_in_doe()):
             continue
         new_line=update_material_parameter_line(material_file, key, test_vals[key])
         old_line=get_mat_card(material_file)[2]
-        print(old_line)
-        print(new_line)
         write_new_material_line(material_file,old_line,new_line)
     submit()
+    b_loop=True
+    while b_loop:
+        time.sleep(5)
+        print("Simulation in progress")
+        if is_finished:
+            print("Simulation Finished")
+            b_loop = False
+        else:
+            continue
     copy_folder_to('blank','ArchivedDynaOutputs',simID)
-    copy_folder_to('11_stage1_forming','ArchivedDynaOutputs',simID)
-    copy_folder_to('22_stage2_springback','ArchivedDynaOutputs',simID)
+    copy_folder_to('1_stage1_forming','ArchivedDynaOutputs',simID)
+    clean_folder('1_stage1_forming')
+    copy_folder_to('2_stage2_springback','ArchivedDynaOutputs',simID)
+    clean_folder('2_stage2_springback')
 
 
 #3. copy and move the files to the destination folder

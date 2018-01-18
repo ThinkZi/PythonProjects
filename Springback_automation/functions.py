@@ -7,6 +7,8 @@ import re
 from decimal import Decimal
 import fileinput
 import sys
+import subprocess
+
 
 #read paths
 def find_path(whichpath):
@@ -45,7 +47,7 @@ def clean_folder(to_be_deleted_folder_name):
 
 #run the .bat file including dyna commands
 def submit():
-    os.system(r"C:\Hamed\backup\test\Springback_Experiment\filleted\test.bat")
+    subprocess.call(r"C:\Hamed\backup\test\Springback_Experiment\filleted\do.bat", shell=True)
     return
 
 def how_many_rows_in_doe():
