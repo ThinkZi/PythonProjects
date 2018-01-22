@@ -52,5 +52,5 @@ for i in range(how_many_rows_in_doe()):
     copy_folder_to('2_stage2_springback','ArchivedDynaOutputs',simID)
     raw_SB_results_folder=find_path('2_stage2_springback')
     nodout_file_path=raw_SB_results_folder+"/"+"2_stage2_springback.nodout"
-    read_nodout_displacements_to_df(nodout_file_path).to_csv(simID+".csv")
+    read_nodout_displacements_to_df(nodout_file_path).to_csv(results_folder+"/"+simID+".csv")
     clean_folder('2_stage2_springback')
