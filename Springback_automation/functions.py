@@ -111,7 +111,7 @@ def write_new_material_line(path,oldLine,newLine):
     return
 #reads the nodout file and passes a dataframe containing the displacements
 #and node ids
-def read_nodout_to_df(path):
+def read_nodout_displacements_to_df(path):
     phrase1= "n o d a l   p r i n t   o u t"
     phrase2= "at time 1.0000000E+00"
     phrase3= "x-disp"
@@ -154,13 +154,11 @@ def read_nodout_to_df(path):
     df=df[1:] #removing the first row which is empty
     return df
 
-#folderID="blank"
-#fname="blank_material.k"
-#folder_path=find_path(folderID)
-#path=folder_path+"/"+fname
-#card=get_mat_card(path)
-#newLine=update_material_parameter_line(path,"E",210000)
-#write_new_material_line(path,card[2],newLine)
-
-#path=r"C:\Hamed\backup\test\Springback_Experiment\filleted\2_stage2_springback\2_stage2_springback.nodout"
-#print(read_nodout_to_df(path))
+def return_nodout_file_paths(topdir):
+    flist=[]
+    wanted_file_name='2_stage2_springback.nodout'
+    for dirpath, dirnames, files in os.walk(topdir):
+        for name in files:
+            if name==wanted_file_name:
+                flist.append(os.path.join(dirpath, name))
+    return flist
