@@ -111,7 +111,7 @@ def write_new_material_line(path,oldLine,newLine):
     return
 #reads the nodout file and passes a dataframe containing the displacements
 #and node ids
-def read_nodout_displacements_to_df(path):
+def read_nodout_to_df(path):
     phrase1= "n o d a l   p r i n t   o u t"
     phrase2= "at time 1.0000000E+00"
     phrase3= "x-disp"
@@ -136,29 +136,28 @@ def read_nodout_displacements_to_df(path):
                 point_list=list(line)[0:9]
                 point="".join(point_list)
                 point=point.strip()
-                xdisp_list=list(line)[10:22]
+                xdisp_list=list(line)[10+0*12:22+0*12]
                 xdisp="".join(xdisp_list)
                 xdisp=xdisp.strip()
-                row.append(xdisp)
-                ydisp_list=list(line)[22:34]
+                ydisp_list=list(line)[10+1*12:22+1*12]
                 ydisp="".join(ydisp_list)
                 ydisp=ydisp.strip()
-                row.append(ydisp)
-                zdisp_list=list(line)[34:46]
+                zdisp_list=list(line)[10+2*12:22+2*12]
                 zdisp="".join(zdisp_list)
                 zdisp=zdisp.strip()
-                row=[point,xdisp,ydisp,zdisp]
+                xcoord_list=list(line)[10+9*12:22+9*12]
+                xcoord="".join(xcoord_list)
+                xcoord=xcoord.strip()
+                ycoord_list=list(line)[10+10*12:22+10*12]
+                ycoord="".join(ycoord_list)
+                ycoord=ycoord.strip()
+                zcoord_list=list(line)[10+11*12:22+11*12]
+                zcoord="".join(zcoord_list)
+                zcoord=zcoord.strip()
+                row=[point,xdisp,ydisp,zdisp,xcoord,ycoord,zcoord]
                 l.append(row)
                 row=[]
-    df=pd.DataFrame(l,columns=header[:4])
+    df=pd.DataFrame(l,columns=[header[0],header[1],header[2],header[3],
+    header[10],header[11],header[12]])
     df=df[1:] #removing the first row which is empty
     return df
-
-def return_nodout_file_paths(topdir):
-    flist=[]
-    wanted_file_name='2_stage2_springback.nodout'
-    for dirpath, dirnames, files in os.walk(topdir):
-        for name in files:
-            if name==wanted_file_name:
-                flist.append(os.path.join(dirpath, name))
-    return flist
