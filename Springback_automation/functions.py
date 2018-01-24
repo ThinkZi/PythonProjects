@@ -115,6 +115,7 @@ def read_nodout_to_df(path):
     phrase1= "n o d a l   p r i n t   o u t"
     phrase2= "at time 1.0000000E+00"
     phrase3= "x-disp"
+    phrase4="x-rot"
     b1=False
     b2=False
     b3=True
@@ -130,8 +131,12 @@ def read_nodout_to_df(path):
                 del header[0]
                 b2=True
                 continue
-            if b1 and b2 and phrase1 in line:
-                b3=False
+            if phrase4 in line:
+                b2=False
+            if len(line.strip()) == 0:
+                continue
+            if b1 and b2 and b3 and phrase1 in line:
+                break
             if b1 and b2 and b3:
                 point_list=list(line)[0:9]
                 point="".join(point_list)
@@ -159,5 +164,4 @@ def read_nodout_to_df(path):
                 row=[]
     df=pd.DataFrame(l,columns=[header[0],header[1],header[2],header[3],
     header[10],header[11],header[12]])
-    df=df[1:] #removing the first row which is empty
     return df
