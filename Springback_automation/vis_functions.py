@@ -3,6 +3,7 @@ import os
 from math import ceil
 import plotly as py
 from plotly.graph_objs import Scatter3d, Layout, Figure
+
 def result_files(topdir):
     flist=[]
     for dirpath, dirnames, files in os.walk(topdir):
@@ -10,7 +11,7 @@ def result_files(topdir):
             flist.append(os.path.join(dirpath, name))
     return flist
 
-def get_Scatter_plot(dframe):
+def get_Scatter_plot_trace_scene(dframe):
     #these strings e.g. x-coor , x-disp are coming from the dumped csv file
     #which in turn is coming from the DYNA nodout file
     xt="x-coor"
@@ -23,13 +24,9 @@ def get_Scatter_plot(dframe):
     marker=dict(size=3,color=abs_disp,colorscale='Jet',showscale=True),
     legendgroup=abs_disp,
     hovertext=abs_disp)
-    #data=[trace]
-    layout=Layout(scene=dict(xaxis=dict(range=axis_range[xt]),
-    yaxis=dict(range=axis_range[yt]),
-    zaxis=dict(range=axis_range[zt])),
-    margin=dict(l=0,r=0,b=0,t=0))
-    #fig=Figure(data=data,layout=layout)
-    return trace, layout
+    scene=dict(xaxis=dict(range=axis_range[xt]),
+    yaxis=dict(range=axis_range[yt]), zaxis=dict(range=axis_range[zt]))
+    return trace, scene
 #returns a dictionary with the range values as lists [min,max]
 def set_axis_ranges(dframe):
     #the keys for the dictionary which is the same as the dataframe column labels
@@ -80,23 +77,26 @@ def gen_3d_specs(number_of_objs):
         a.append(b)
     return a
 #data is the list of trace objects
-def gen_sub_plots(data):
+def gen_sub_plots(data,scenes):
     number_of_objs=len(data)
     rc=get_array_layout(number_of_objs)
     fig=py.tools.make_subplots(rows=rc["row_number"],cols=rc["col_number"],
     specs=gen_3d_specs(number_of_objs))
-    counter=1
+    counter=0
     for i in range(rc["row_number"]):
         for j in range(rc["col_number"]):
-            if counter <= number_of_objs:
+            if counter < number_of_objs:
+                scene_name="scene"+str(counter+1)
                 fig.append_trace(data[counter],i+1,j+1)
+                fig['layout'][scene_name].update(scenes[counter])
             counter+=1
     return fig
 
 df=pd.read_csv(r'C:\Hamed\test.csv')
-t, l=get_Scatter_plot(df)
-data=[t,t,t,t]
-fig=gen_sub_plots(data)
+t, l=get_Scatter_plot_trace_scene(df)
+data=[t,t,t]
+layout=[l,l,l]
+fig=gen_sub_plots(data,layout)
 #fig=get_Scatter_plot(df)
 py.offline.plot(fig,filename='test.html')
 #print(get_array_layout(12))
