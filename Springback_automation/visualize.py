@@ -9,9 +9,11 @@ traces=[]
 layouts=[]
 
 for res_file in files_list:
-    t0,l0=pd.read_csv(res_file)
+    df=pd.read_csv(res_file)
+    t0, l0=get_Scatter_plot_trace_scene(df)
     traces.append(t0)
     layouts.append(l0)
+
 
 fig=gen_sub_plots(traces,layouts)
 py.offline.plot(fig,filename='test.html')
