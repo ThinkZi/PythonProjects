@@ -90,14 +90,13 @@ def gen_sub_plots(data,scenes):
                 fig.append_trace(data[counter],i+1,j+1)
                 fig['layout'][scene_name].update(scenes[counter])
             counter+=1
+    fig['layout'].update(height=rc['row_number']*400,
+     width=rc['col_number']*400, title='Springback')
     return fig
 
-df=pd.read_csv(r'C:\Hamed\test.csv')
-t, l=get_Scatter_plot_trace_scene(df)
-data=[t,t,t]
-layout=[l,l,l]
-fig=gen_sub_plots(data,layout)
-#fig=get_Scatter_plot(df)
-py.offline.plot(fig,filename='test.html')
-#print(get_array_layout(12))
-#print(gen_3d_specs(12))
+#df=pd.read_csv(r'C:\Hamed\test.csv')
+#t, l=get_Scatter_plot_trace_scene(df)
+#data=[t,t,t,t,t]
+#layout=[l,l,l,l,l]
+#fig=gen_sub_plots(data,layout)
+#py.offline.plot(fig,filename='test.html')
