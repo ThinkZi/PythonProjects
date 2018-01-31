@@ -2,6 +2,7 @@ import pandas as pd
 from vis_functions import *
 from functions import find_path
 import plotly as py
+import os
 
 
 files_list=result_files(find_path('results'))
@@ -14,6 +15,9 @@ for res_file in files_list:
     traces.append(t0)
     layouts.append(l0)
 
-
-fig=gen_sub_plots(traces,layouts)
+titles=gen_titles(files_list)
+print(files_list)
+print(gen_3d_specs(4))
+print(titles)
+fig=gen_sub_plots(traces,layouts,titles)
 py.offline.plot(fig,filename='test.html')

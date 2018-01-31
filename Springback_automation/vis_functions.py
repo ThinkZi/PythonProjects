@@ -3,6 +3,7 @@ import os
 from math import ceil
 import plotly as py
 from plotly.graph_objs import Scatter3d, Layout, Figure
+import os
 
 def result_files(topdir):
     flist=[]
@@ -21,8 +22,8 @@ def get_Scatter_plot_trace_scene(dframe):
     axis_range=set_axis_ranges(dframe)
     trace=Scatter3d(x=dframe[xt].values,y=dframe[yt].values,z=dframe[zt].values,
     mode='markers',
-    marker=dict(size=3,color=abs_disp,colorscale='Jet',showscale=True),
-    legendgroup=abs_disp,
+    marker=dict(size=3,color=abs_disp,colorscale='Jet',showscale=False),
+    legendgroup=abs_disp,showlegend=True,
     hovertext=abs_disp)
     scene=dict(xaxis=dict(range=axis_range[xt]),
     yaxis=dict(range=axis_range[yt]), zaxis=dict(range=axis_range[zt]))
@@ -77,10 +78,11 @@ def gen_3d_specs(number_of_objs):
         a.append(b)
     return a
 #data is the list of trace objects
-def gen_sub_plots(data,scenes):
+def gen_sub_plots(data,scenes,titles):
     number_of_objs=len(data)
     rc=get_array_layout(number_of_objs)
     fig=py.tools.make_subplots(rows=rc["row_number"],cols=rc["col_number"],
+    #subplot_titles=('x','x'),
     specs=gen_3d_specs(number_of_objs))
     counter=0
     for i in range(rc["row_number"]):
@@ -88,11 +90,24 @@ def gen_sub_plots(data,scenes):
             if counter < number_of_objs:
                 scene_name="scene"+str(counter+1)
                 fig.append_trace(data[counter],i+1,j+1)
-                fig['layout'][scene_name].update(scenes[counter])
+                fig['layout'][scene_name].update(scenes[counter],
+                annotations=[dict(z=40,text=titles[counter], showarrow=False)])
             counter+=1
     fig['layout'].update(height=rc['row_number']*400,
      width=rc['col_number']*400, title='Springback')
     return fig
+
+#gets the list of file names, strips the extensions and adds a few empty members
+#to match the number of sub_plot holders
+def gen_titles(flist):
+    titles=[]
+    rc=get_array_layout(len(flist))
+    for fname in flist:
+        titles=titles+[os.path.basename(fname)[:-4]]#this removes the file extension from the title
+    for i in range(len(flist),rc['col_number']*rc['row_number']):
+        titles=titles+['0']
+    return tuple(titles)
+
 
 #df=pd.read_csv(r'C:\Hamed\test.csv')
 #t, l=get_Scatter_plot_trace_scene(df)
