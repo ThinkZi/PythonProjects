@@ -33,9 +33,18 @@ for i in range(how_many_rows_in_doe()):
         simID=str(int(test_vals["simID"]))
         if key == "simID":
             continue
-        new_line=update_material_parameter_line(material_file, key, test_vals[key])
-        old_line=get_mat_card(material_file)[2]
-        write_new_material_line(material_file,old_line,new_line)
+        if key in ["ro","e","pr","sigy","etan","r"]:
+            new_line=update_material_parameter_line(material_file, key, test_vals[key])
+            old_line=get_mat_card(material_file)[2]
+            write_new_material_line(material_file,old_line,new_line)
+    keys=list(test_vals.keys())
+    if 's0' in keys and 'k' in keys and 'n' in keys:
+        s0=test_vals['s0']
+        k=test_vals['k']
+        n=test_vals['n']
+        curve_df=gen_stress_strain(s0,k,n)
+        curve_list_formatted=format_stress_strain_lines_DYNA(curve_df)
+        update_stress_strain_curve(material_file,curve_list_formatted)
     submit()
     b_loop=True
     while b_loop:
