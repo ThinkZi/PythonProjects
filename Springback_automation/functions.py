@@ -165,3 +165,78 @@ def read_nodout_to_df(path):
     df=pd.DataFrame(l,columns=[header[0],header[1],header[2],header[3],
     header[10],header[11],header[12]])
     return df
+
+#returns a pandas DataFrame for stress strain values
+def gen_stress_strain(s0,k,n):
+    rows=21
+    l=[]
+    max_strain=0.8
+    strain=0
+    for i in range(rows):
+        if strain == max_strain:
+            break
+        strain_step=max_strain/rows
+        l.append([strain,s0+k*(strain**n)])
+        strain+=strain_step
+    df=pd.DataFrame(l, columns=['strain','stress'])
+    return df
+#returns a list of string lines containing stress and strain values in the
+#right DYNA character locations
+def format_stress_strain_lines_DYNA(df):
+    #generate a list of 40 characters with spaces
+    l=[]
+    lines=[]
+    for i in range(40):
+        l.append(' ')
+    DYNA_character_loc={'strain':20,'stress':40}
+    num_format='%.4E'
+    for index, row in df.iterrows():
+        strain=list(num_format %Decimal(row['strain']))
+        stress=list(num_format %Decimal(row['stress']))
+        for i in range(len(strain)):
+            l[DYNA_character_loc['strain']-(i+1)]=strain[-(i+1)]
+            l[DYNA_character_loc['stress']-(i+1)]=stress[-(i+1)]
+            line=''.join(l)
+            line=line+'\n'
+        lines.append(line)
+    return lines
+
+#updates the stress strain curve in the blank material files
+def update_stress_strain_curve(path,replacement_lines):
+    read_curve_keyword=False
+    curve_data_finished = False
+    exception=True
+    i=-1
+    phrase1='DEFINE_CURVE'
+    newLines=[]
+    with open(path) as f:
+        for oldLine in f:
+            c = oldLine[0]
+            if phrase1 in oldLine and not read_curve_keyword:
+                read_curve_keyword = True
+                newLines.append(oldLine)
+                continue
+            elif c == '*' and read_curve_keyword:
+                curve_data_finished = True
+                newLines.append(oldLine)
+                continue
+            elif read_curve_keyword and not curve_data_finished:
+                #skip the first line including numerical values after the define curve keyword
+                if oldLine.split()[0][0].isnumeric() and exception:
+                    newLines.append(oldLine)
+                    exception=False
+                    continue
+                if oldLine.split()[0][0].isnumeric() and not exception:
+                    i+=1
+                    print(i,':',oldLine)
+                    newLines.append(replacement_lines[i])
+                else:
+                    newLines.append(oldLine)
+                continue
+            else:
+                newLines.append(oldLine)
+                continue
+    with open(path,'w') as f:
+        for line in newLines:
+            f.write(line)
+    return newLines
