@@ -240,3 +240,17 @@ def update_stress_strain_curve(path,replacement_lines):
         for line in newLines:
             f.write(line)
     return newLines
+
+def update_thickness(path,t):
+    thickness_declarations=['R b1thick','R bthick']
+    for line in fileinput.input(path, inplace=1):
+        for thickness_declaration in thickness_declarations:
+            if thickness_declaration in line:
+                temp_list=list(line)
+                i=-1
+                for c in reversed(list(str(t))):
+                    i-=1
+                    temp_list[i]=c
+                line="".join(temp_list)
+        sys.stdout.write(line)
+    return
