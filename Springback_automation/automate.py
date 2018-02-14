@@ -24,6 +24,8 @@ ensure_dir(results_folder)
 
 #get the material file
 material_file=find_path('blank')+"/"+"blank_material.k"
+forming_parameter_file=find_path('1_stage1_forming')+"/"+"do.k"
+sb_parameter_file=find_path('2_stage2_springback')+"/"+"do.k"
 
 for i in range(how_many_rows_in_doe()):
     #iterating the rows of the DOE table
@@ -45,6 +47,9 @@ for i in range(how_many_rows_in_doe()):
         curve_df=gen_stress_strain(s0,k,n)
         curve_list_formatted=format_stress_strain_lines_DYNA(curve_df)
         update_stress_strain_curve(material_file,curve_list_formatted)
+    if 't' in keys:
+        update_thickness(forming_parameter_file,test_vals['t'])
+        update_thickness(sb_parameter_file,test_vals['t'])
     submit()
     b_loop=True
     while b_loop:
