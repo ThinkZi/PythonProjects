@@ -248,7 +248,7 @@ def update_thickness(path,t):
             if thickness_declaration in line:
                 temp_list=list(line)
                 i=-1
-                for c in reversed(list(str(t))):
+                for c in reversed(list("{:.3f}".format(t))):
                     i-=1
                     temp_list[i]=c
                 line="".join(temp_list)
