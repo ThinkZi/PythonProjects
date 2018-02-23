@@ -1,6 +1,6 @@
 from vis_functions import result_files
 import pandas as pd
-flist= result_files(r'C:\Hamed\backup\test\Springback_Experiment\filleted\IDDRG2018\Aluminum\results')
+flist= result_files(r'C:\Hamed\backup\test\Springback_Experiment\filleted\IDDRG2018\Steel\results')
 disp=[]
 simID=[]
 for f in flist:
@@ -10,4 +10,4 @@ for f in flist:
     simID.append(f[-9:-4])
 df2=pd.DataFrame({'simID': simID, 'max_displacement':disp})
 print(df2)
-df2.to_csv('max_disp.csv')
+df2.to_csv('max_disp_steel.csv')
